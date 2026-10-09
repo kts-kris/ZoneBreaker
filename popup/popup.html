@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>ZoneBreaker (ZB)</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="zb-container">
+    <!-- Header -->
+    <header class="zb-header">
+      <div class="logo-box">
+        <span class="logo-icon">⚡</span>
+        <div class="title-group">
+          <h1 class="glitch-text" data-text="ZONE BREAKER">ZONE BREAKER</h1>
+          <span class="sub-title">破界者 (ZB) v1.0.0</span>
+        </div>
+      </div>
+      <div class="badge-status" id="badgeStatus">ARMED</div>
+    </header>
+
+    <!-- Global Master Switch -->
+    <div class="switch-panel">
+      <div class="switch-info">
+        <span class="switch-label">全局伪装总开关</span>
+        <span class="switch-desc">全局一键开启/暂停所有环境劫持</span>
+      </div>
+      <label class="toggle-btn">
+        <input type="checkbox" id="masterToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Active Tab Domain Card -->
+    <div class="domain-card" id="domainCard">
+      <div class="domain-header">
+        <span class="domain-icon">🌐</span>
+        <span class="domain-name" id="currentDomain">检测当前网页中...</span>
+      </div>
+      <div class="domain-controls">
+        <label class="domain-toggle-label">
+          <input type="checkbox" id="domainToggle" checked>
+          <span class="domain-toggle-text">对此网站启用破界伪装</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Target Profile & Smart GeoIP Sync -->
+    <div class="profile-card">
+      <div class="profile-header-row">
+        <label class="field-label" for="profileSelect">🎯 伪装环境预设 (Profile)</label>
+      </div>
+      <select id="profileSelect" class="styled-select">
+        <option value="us-west" selected>🇺🇸 美国西岸 (硅谷原生 macOS / Chrome)</option>
+        <option value="us-east">🇺🇸 美国东岸 (纽约商务 Windows 11 / Chrome)</option>
+        <option value="uk">🇬🇧 英国伦敦 (London macOS / Chrome)</option>
+        <option value="jp">🇯🇵 日本东京 (Tokyo macOS / Chrome)</option>
+      </select>
+
+      <button id="btnGeoSync" class="geo-btn">
+        <span class="geo-btn-icon">⚡</span>
+        <span id="geoBtnText">一键根据当前代理 IP 自动对齐时区</span>
+      </button>
+      <div id="geoResultText" class="geo-result"></div>
+    </div>
+
+    <!-- 10 Detection Vectors Radar -->
+    <div class="vectors-panel">
+      <div class="vectors-header">
+        <span>🛡️ 10 维风控防御矩阵状态</span>
+        <span class="all-ok-tag" id="radarSummary">10/10 PASS</span>
+      </div>
+      <ul class="vector-list">
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">系统时区</span><span class="v-val" id="valTimezone">America/Los_Angeles</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">浏览器语言</span><span class="v-val" id="valLocale">en-US, en</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">已安装中文字体</span><span class="v-val">深度沙盒隐匿 (苹方/雅黑)</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">国产厂商字体</span><span class="v-val">深度沙盒隐匿 (MiSans/鸿蒙)</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">WebRTC IP 泄露</span><span class="v-val">非代理 UDP 直连已阻断</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">国产浏览器/WebView</span><span class="v-val">纯净 Chrome 128 原生</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">国产品牌设备</span><span class="v-val" id="valPlatform">MacIntel / macOS</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">Intl 区域设置</span><span class="v-val">en-US 国际化标准</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">时区偏移</span><span class="v-val" id="valOffset">PDT (UTC-7)</span></li>
+        <li class="vector-item"><span class="v-icon">✓</span><span class="v-name">Emoji 渲染风格</span><span class="v-val">macOS 原生渲染</span></li>
+      </ul>
+    </div>
+
+    <!-- Advanced Drawer Accordion -->
+    <div class="advanced-section">
+      <button id="btnToggleAdvanced" class="advanced-toggle-btn">
+        <span>⚙️ 高级极客微调与配置导入/导出</span>
+        <span id="advArrow">▼</span>
+      </button>
+      <div id="advancedDrawer" class="advanced-drawer hidden">
+        <label class="adv-checkbox-row">
+          <input type="checkbox" id="chkCanvasNoise">
+          <span>启用 Canvas 像素微扰 (破坏指纹 Hash)</span>
+        </label>
+        <label class="adv-checkbox-row">
+          <input type="checkbox" id="chkFontSandbox" checked>
+          <span>启用彻底中文字体沙盒 (CSS @font-face 阻断)</span>
+        </label>
+        
+        <div class="sync-buttons-row">
+          <button id="btnExportConfig" class="sec-btn">⬇️ 导出配置 (JSON)</button>
+          <button id="btnImportConfig" class="sec-btn">⬆️ 导入配置 (JSON)</button>
+          <input type="file" id="fileInputImport" accept=".json" style="display:none;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Action: Test Lab -->
+    <div class="action-footer">
+      <button id="btnOpenTest" class="test-btn">🔬 打开 1:1 检测复现实验室</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
