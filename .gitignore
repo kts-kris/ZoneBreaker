@@ -19,7 +19,15 @@ yarn-error.log*
 test-profile*
 .system_generated/
 
+# Keys and Credentials
+*.pem
+*.key
+
 # Build artifacts
 dist/unpacked/
+dist/unpacked_firefox/
 dist/*.zip
+dist/*.crx
+dist/*.xpi
 dist/SHA256SUMS.txt
+

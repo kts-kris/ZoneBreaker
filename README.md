@@ -15,9 +15,10 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Manifest-V3-blue.svg" alt="Manifest V3" />
-  <img src="https://img.shields.io/badge/Chrome-128%2B-green.svg" alt="Chrome 128+" />
+  <img src="https://img.shields.io/badge/Chrome-102%2B-green.svg" alt="Chrome 102+" />
+  <img src="https://img.shields.io/badge/Edge-102%2B-blue.svg" alt="Edge 102+" />
+  <img src="https://img.shields.io/badge/Firefox-109%2B-orange.svg" alt="Firefox 109+" />
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License MIT" />
-  <img src="https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg" alt="Status" />
   <img src="https://img.shields.io/badge/PRs-Welcome-orange.svg" alt="PRs Welcome" />
 </p>
 
@@ -31,6 +32,36 @@
 **ZoneBreaker (ZB)** is an advanced anti-fingerprinting, zero-isolation browser environment cloaking extension designed to counter modern high-precision risk control models, fraud detection systems, and geographic anti-bot shields (such as those employed by Anthropic Claude, OpenAI ChatGPT, Perplexity, CreepJS, and BotD).
 
 Traditional extensions fail because they only operate in isolated content script worlds or modify a few superficial HTTP headers. **ZoneBreaker** executes inside Chrome's **MAIN World** at `document_start`, providing deep prototype patching with native `Function.prototype.toString` disguise, dynamic Canvas text-measurement sanitization, and automatic Proxy GeoIP timezone alignment.
+
+---
+
+### 🌐 Supported Browsers & Compatibility
+
+ZoneBreaker is natively built and verified across modern Chromium and Gecko browsers:
+
+| Browser Family | Browser Name | Supported Version | Recommended Package | Compatibility Status |
+| :--- | :--- | :---: | :--- | :---: |
+| **Chromium** | **Google Chrome** | v102+ | `.crx` / `.zip` | 🟢 100% Full Support |
+| **Chromium** | **Microsoft Edge** | v102+ | `.crx` / `.zip` | 🟢 100% Full Support |
+| **Chromium** | **Brave Browser** | v1.40+ | `.crx` / `.zip` | 🟢 100% Full Support |
+| **Chromium** | **Arc Browser** | All versions | `.zip` (Unpacked) | 🟢 100% Full Support |
+| **Chromium** | **Vivaldi** | v5.3+ | `.crx` / `.zip` | 🟢 100% Full Support |
+| **Chromium** | **Opera / Opera GX** | v88+ | `.crx` / `.zip` | 🟢 100% Full Support |
+| **Gecko** | **Mozilla Firefox** | v109+ / Dev / Nightly | `.xpi` | 🟢 Full Support (`about:debugging` / Dev) |
+| **Gecko** | **Floorp / Librewolf / Waterfox** | Modern MV3 | `.xpi` | 🟢 Full Support |
+
+---
+
+### 📦 Release Packages: Which File Should You Download?
+
+Head to [Releases](https://github.com/kts-kris/ZoneBreaker/releases) and choose the package built for your browser:
+
+* **`ZoneBreaker_v1.0.0.crx`**: Standard Chromium offline installation package for **Google Chrome, Microsoft Edge, Brave, Vivaldi, Opera**. Drag and drop into the extension manager to install.
+* **`ZoneBreaker_v1.0.0.zip` (or `_chromium.zip`)**: Universal unpacked zip archive. Unzip and click "Load unpacked" in any Chromium browser (including **Arc Browser**).
+* **`ZoneBreaker_v1.0.0_firefox.xpi`**: Specialized Gecko package for **Mozilla Firefox, Firefox Developer Edition, Nightly, Floorp, Librewolf**.
+* **`SHA256SUMS.txt`**: Cryptographic integrity checksums for verification.
+
+---
 
 ### 🛡️ The 10 Defense Vectors
 
@@ -48,6 +79,8 @@ ZoneBreaker achieves a **100% Pass Rate (0 Risk Score)** across all 10 critical 
 | **8** | **Intl Locale Settings** | 4 / 10 | `Intl.*.resolvedOptions().locale` returns `zh-CN` | Rewrites all Intl formatting tools (Collator, NumberFormat, DateTimeFormat) to `en-US` |
 | **9** | **Timezone Offset** | 3 | `getTimezoneOffset()` returns -480 (UTC+8) | Calculates true target offset dynamically (e.g., PDT returns `420` minutes) |
 | **10** | **Emoji Rendering Style** | 3 | Operating system glyph metrics mismatch | Aligns with target native OS glyph metrics (macOS Apple Color Emoji) |
+
+---
 
 ### ⚡ Key Architectural Features
 
@@ -76,31 +109,45 @@ flowchart TD
 
 1. **MAIN World Zero-Isolation Execution**: Runs directly inside the page's execution context before any page scripts execute (`document_start`), with zero bridge latency.
 2. **Native Code Disguise**: Every overridden getter and function is shielded by a WeakMap-backed `Function.prototype.toString` hook, rendering them indistinguishable from browser native methods (`function () { [native code] }`).
-3. **AST-Level Canvas Font Sanitization**: Unlike naive methods that inject CSS `@font-face` (which creates false positives by resolving non-existent fonts to Arial), ZoneBreaker intercepts `CanvasRenderingContext2D` and `OffscreenCanvasRenderingContext2D` `measureText` calls and cleanses font chains so that Chinese font widths equal base font widths with zero difference.
+3. **AST-Level Canvas Font Sanitization**: Intercepts `CanvasRenderingContext2D` and `OffscreenCanvasRenderingContext2D` `measureText` calls and cleanses font chains so that Chinese font widths equal base font widths with zero difference (`0.00000000`).
 4. **Anti-Escape Defense**: Intercepts `HTMLIFrameElement.prototype.contentWindow` to prevent detectors from creating clean `about:blank` iframes to bypass prototype chains.
 5. **Smart Proxy GeoIP Alignment**: Built-in one-click GeoIP synchronization queries your current outbound proxy IP and automatically matches the optimal timezone preset.
 6. **Global Armed by Default with Domestic Whitelist**: Protects all AI platforms and risk control testing sites by default, while allowing domestic websites (`.cn`, Baidu, Taobao, JD, Bilibili, Feishu, etc.) to pass through natively.
 
-### 🚀 Installation & Getting Started
+---
 
-#### Option A: Load Unpacked Extension (Recommended for Developers)
-1. Clone or download this repository:
-   ```bash
-   git clone https://github.com/kts-kris/ZoneBreaker.git
-   ```
-2. Open Google Chrome and navigate to:
-   ```text
-   chrome://extensions/
-   ```
-3. Enable **Developer mode** in the top-right corner.
-4. Click **Load unpacked** in the top-left corner.
-5. Select the repository root folder `ZoneBreaker` (or `dist/unpacked/`).
-6. Pin **ZoneBreaker (ZB)** to your Chrome toolbar.
+### 🚀 Browser-Specific Installation Guides
 
-#### Option B: Download Release ZIP
-1. Download the latest `ZoneBreaker_v1.0.0.zip` from [Releases](https://github.com/kts-kris/ZoneBreaker/releases).
-2. Unzip it to a local folder.
-3. Follow the steps in Option A to load the unzipped folder into Chrome.
+#### 1. Google Chrome / Brave / Vivaldi / Opera
+* **Method A (Drag & Drop .CRX)**:
+  1. Download `ZoneBreaker_v1.0.0.crx` from [Releases](https://github.com/kts-kris/ZoneBreaker/releases).
+  2. Open your browser and navigate to `chrome://extensions/` (or `brave://extensions/`, `vivaldi://extensions/`).
+  3. Toggle **Developer mode** on in the top-right corner.
+  4. Drag and drop the `.crx` file onto the page and confirm installation.
+* **Method B (Unpacked Folder)**:
+  1. Download and extract `ZoneBreaker_v1.0.0.zip`.
+  2. In `chrome://extensions/`, click **Load unpacked** and select the unzipped folder.
+
+#### 2. Microsoft Edge
+1. Navigate to `edge://extensions/`.
+2. Turn on the **Developer mode** toggle in the left sidebar.
+3. Download `ZoneBreaker_v1.0.0.crx` and drag it onto the page, or click **Load unpacked** using the extracted `ZoneBreaker_v1.0.0.zip`.
+
+#### 3. Arc Browser
+1. Download and extract `ZoneBreaker_v1.0.0.zip`.
+2. Open Arc settings, go to **Extensions** (or `arc://extensions/`).
+3. Enable **Developer mode** -> **Load unpacked** -> Select the extracted folder.
+
+#### 4. Mozilla Firefox / Floorp / Librewolf
+* **Temporary Add-on (Any Firefox version)**:
+  1. Download `ZoneBreaker_v1.0.0_firefox.xpi`.
+  2. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`.
+  3. Click **Load Temporary Add-on...** and select the `.xpi` file.
+* **Permanent Installation (Firefox Developer Edition / Nightly / Librewolf)**:
+  1. Navigate to `about:config` and set `xpinstall.signatures.required` to `false`.
+  2. Drag and drop `ZoneBreaker_v1.0.0_firefox.xpi` into any tab to install permanently.
+
+---
 
 ### 🔬 Verification & Testing Lab
 
@@ -113,16 +160,18 @@ This repository includes two automated verification suites:
    node test/verify_fuckclaude.mjs
    ```
 
-### 🛠️ Build & Package
+### 🛠️ Multi-Browser Packaging Engine
 
-To build a clean production release package:
+To build distribution packages for all browser ecosystems:
 ```bash
 node build.mjs
 ```
-Outputs are generated in `dist/`:
-- `dist/unpacked/`: Clean unpacked extension directory.
-- `dist/ZoneBreaker_v1.0.0.zip`: Standard distribution zip.
-- `dist/SHA256SUMS.txt`: Cryptographic integrity checksums.
+The script generates all release artifacts in `dist/`:
+- `ZoneBreaker_v1.0.0.crx`: Packed Chromium extension file
+- `ZoneBreaker_v1.0.0.zip`: Universal unpacked Chromium archive
+- `ZoneBreaker_v1.0.0_firefox.xpi`: Firefox / Gecko add-on package
+- `dist/unpacked/`: Clean unpacked extension directory
+- `SHA256SUMS.txt`: Cryptographic integrity checksums
 
 ---
 
@@ -131,9 +180,39 @@ Outputs are generated in `dist/`:
 
 ### 项目简介
 
-**ZoneBreaker (ZB) - 破界者** 是一款专为对抗现代高精度环境风控检测（如 Claude、OpenAI、Perplexity、金融反作弊等高敏风控模型）而打造的 Chrome 无痕环境伪装扩展程序（Manifest V3 规范）。
+**ZoneBreaker (ZB) - 破界者** 是一款专为对抗现代高精度环境风控检测（如 Claude、OpenAI、Perplexity、金融反作弊等高敏风控模型）而打造的跨浏览器无痕环境伪装扩展程序（Manifest V3 规范）。
 
 传统伪装插件往往局限于 Isolated World 隔离环境或单纯修改 HTTP 请求头，极易被网页主线程的原型链扫描和 Canvas 测宽探针识破。**ZoneBreaker** 在 `document_start` 第一毫秒切入 Chrome **MAIN World（主执行环境）**，深度重构原型链与测宽渲染管线，提供完美伪装原生 `[native code]` 的反侦察装甲。
+
+---
+
+### 🌐 浏览器支持与兼容性矩阵
+
+ZoneBreaker 经过严格的跨内核兼容性测试，现已原生适配主流 Chromium 与 Gecko 浏览器：
+
+| 浏览器家族 | 浏览器名称 | 兼容版本 | 推荐使用安装包 | 兼容状态 |
+| :--- | :--- | :---: | :--- | :---: |
+| **Chromium** | **Google Chrome** | v102+ | `.crx` / `.zip` | 🟢 100% 原生完美支持 |
+| **Chromium** | **Microsoft Edge** | v102+ | `.crx` / `.zip` | 🟢 100% 原生完美支持 |
+| **Chromium** | **Brave 浏览器** | v1.40+ | `.crx` / `.zip` | 🟢 100% 原生完美支持 |
+| **Chromium** | **Arc Browser** | 全版本 | `.zip` (解压加载) | 🟢 100% 原生完美支持 |
+| **Chromium** | **Vivaldi** | v5.3+ | `.crx` / `.zip` | 🟢 100% 原生完美支持 |
+| **Chromium** | **Opera / Opera GX** | v88+ | `.crx` / `.zip` | 🟢 100% 原生完美支持 |
+| **Gecko** | **Mozilla Firefox** | v109+ / Dev / Nightly | `.xpi` | 🟢 支持 (`about:debugging` / 开发者版) |
+| **Gecko** | **Floorp / Librewolf / Waterfox** | 现代 MV3 | `.xpi` | 🟢 完美支持 |
+
+---
+
+### 📦 发布包类型与选择指引
+
+在 [Releases](https://github.com/kts-kris/ZoneBreaker/releases) 页面中，您可以根据所使用的浏览器下载对应的专属文件包：
+
+* **`ZoneBreaker_v1.0.0.crx`**：适用于 **Chrome、Edge、Brave、Vivaldi、Opera** 等 Chromium 内核浏览器的离线安装包，支持直接拖拽安装。
+* **`ZoneBreaker_v1.0.0.zip` (或 `_chromium.zip`)**：通用的 Chromium 解压即用包。解压后可直接通过“加载已解压的扩展程序”导入，**Arc Browser** 及不想开启离线扩展拖拽限制的用户首选。
+* **`ZoneBreaker_v1.0.0_firefox.xpi`**：专为 **Mozilla Firefox、Firefox Developer Edition、Nightly、Floorp、Librewolf** 构建的 Gecko 安装包。
+* **`SHA256SUMS.txt`**：全量发布包的 SHA256 哈希完整性清单，防篡改校验。
+
+---
 
 ### 🛡️ 10 维风控防御矩阵
 
@@ -152,35 +231,40 @@ ZoneBreaker 针对高精风控常见的全部 10 项核心检测维度实现了 
 | **9** | **时区偏移** | 3 | `getTimezoneOffset()` 命中 -480 (UTC+8) | 动态计算目标时区偏移（例如 PDT 夏令时精准返回 `420` 分钟） |
 | **10** | **Emoji 渲染风格** | 3 | 操作系统底层字形测算不匹配 | 联动对齐目标宿主系统的原生 Emoji 测宽（macOS 渲染风格） |
 
-### ⚡ 核心技术特性
+---
 
-1. **MAIN World 零隔离执行**：直接注入页面主世界，无需通过 DOM 事件传参，避免任何时间差穿透。
-2. **反探测伪装 (`[native code]`)**：所有被劫持的 Getter 与函数均通过 WeakMap 映射，`Function.prototype.toString` 输出完美还原原生 `function () { [native code] }`。
-3. **AST 级 Canvas 测宽清洗**：摒弃传统通过 CSS `@font-face` 伪造字体的反作用做法（会导致 Canvas 将字体误判为 Arial），通过在 `CanvasRenderingContext2D` 与 `OffscreenCanvasRenderingContext2D` 的 `measureText` 阶段动态剥离中文字体，实现测宽与基准字体绝对等宽。
-4. **防 iframe 逃逸**：拦截 `HTMLIFrameElement.prototype.contentWindow` Getter，防止检测脚本通过创建干净 `about:blank` iframe 绕过主窗口原型链。
-5. **智能代理 GeoIP 对齐**：内置一键对齐功能，自动查询当前科学上网节点的出口 IP 地理位置，精准匹配最佳伪装预设。
-6. **全局默认武装 + 国内白名单直通**：对所有海外平台、AI 网站及风控检测站默认 100% 启用，同时内置国内常用生活办公名单（`.cn`、百度、淘宝、京东、B站、飞书等）原生直通，兼顾日常体验。
+### 🚀 各浏览器详细安装指南
 
-### 🚀 安装与使用
+#### 1. Google Chrome / Brave / Vivaldi / Opera
+* **方式 A：CRX 拖拽安装（最便捷）**：
+  1. 下载 `ZoneBreaker_v1.0.0.crx`。
+  2. 在浏览器中打开扩展管理页 `chrome://extensions/`（Brave 访问 `brave://extensions/`）。
+  3. 开启右上角 **「开发者模式」**。
+  4. 将 `.crx` 文件拖入扩展管理页面中，确认并完成安装。
+* **方式 B：解压即用加载**：
+  1. 下载并解压 `ZoneBreaker_v1.0.0.zip`。
+  2. 访问 `chrome://extensions/`，点击左上角 **「加载已解压的扩展程序」**，选择解压后的目录。
 
-#### 方式一：加载已解压的扩展程序（开发者推荐）
-1. 克隆或下载本仓库：
-   ```bash
-   git clone https://github.com/kts-kris/ZoneBreaker.git
-   ```
-2. 打开 Google Chrome，访问：
-   ```text
-   chrome://extensions/
-   ```
-3. 打开页面右上角 **「开发者模式」**。
-4. 点击左上角 **「加载已解压的扩展程序」**。
-5. 选择本地目录 `ZoneBreaker`（或 `dist/unpacked/`）。
-6. 在 Chrome 扩展工具栏中将 **ZoneBreaker (ZB)** 固定显示。
+#### 2. Microsoft Edge
+1. 访问 `edge://extensions/`。
+2. 开启左侧菜单栏底部的 **「开发人员模式」**。
+3. 将下载的 `ZoneBreaker_v1.0.0.crx` 拖入页面中；或者解压 `ZoneBreaker_v1.0.0.zip` 后点击 **「加载解压缩的扩展」**。
 
-#### 方式二：下载发布包 ZIP
-1. 前往 [Releases](https://github.com/kts-kris/ZoneBreaker/releases) 页面下载最新的 `ZoneBreaker_v1.0.0.zip`。
-2. 解压压缩包。
-3. 按照方式一中的步骤将其加载到 Chrome 中即可。
+#### 3. Arc Browser
+1. 下载并解压 `ZoneBreaker_v1.0.0.zip`。
+2. 打开 Arc 偏好设置，进入 **Extensions**（或快捷访问 `arc://extensions/`）。
+3. 开启 **Developer Mode**，点击 **Load unpacked**，选择解压出的文件夹即可。
+
+#### 4. Mozilla Firefox / Floorp / Librewolf
+* **临时加载方式（所有 Firefox 版本均可）**：
+  1. 下载 `ZoneBreaker_v1.0.0_firefox.xpi`。
+  2. 在 Firefox 地址栏输入并进入 `about:debugging#/runtime/this-firefox`。
+  3. 点击 **「临时载入附加组件...」**，选择下载的 `.xpi` 文件即可立即生效。
+* **永久安装（Firefox Developer Edition / Nightly / Librewolf）**：
+  1. 访问 `about:config`，搜索并将 `xpinstall.signatures.required` 改为 `false`。
+  2. 将 `ZoneBreaker_v1.0.0_firefox.xpi` 拖拽到浏览器任意标签页内即可永久安装。
+
+---
 
 ### 🔬 本地 1:1 复现实验室与测试
 
@@ -194,14 +278,16 @@ ZoneBreaker 针对高精风控常见的全部 10 项核心检测维度实现了 
 
 ### 🛠️ 自动化构建打包
 
-如需重新打包发布包，执行：
+执行构建脚本即可一键生成全生态发布包：
 ```bash
 node build.mjs
 ```
-打包文件将输出在 `dist/` 目录中：
-- `dist/unpacked/`：解压即用目录
-- `dist/ZoneBreaker_v1.0.0.zip`：生产级发布压缩包
-- `dist/SHA256SUMS.txt`：SHA256 完整性校验清单
+产出物将自动整理于 `dist/` 目录：
+- `ZoneBreaker_v1.0.0.crx`：Chromium 离线 CRX 安装包
+- `ZoneBreaker_v1.0.0.zip`：通用 Chromium 解压即用包
+- `ZoneBreaker_v1.0.0_firefox.xpi`：Firefox 专用 XPI 安装包
+- `dist/unpacked/`：解压即用源码目录
+- `SHA256SUMS.txt`：SHA256 完整性清单
 
 ---
 
@@ -226,10 +312,10 @@ ZoneBreaker/
 │   ├── detector_test.html     # 1:1 本地全量风控复现实验室
 │   ├── verify_fuckclaude.mjs  # FuckClaude 官方探针自动化真机验证脚本
 │   └── autonomous_suite.mjs   # 端到端自动化对比套件
-├── build.mjs                  # 生产级发布包自动构建与校验工具
+├── build.mjs                  # 多浏览器生产发布包自动构建与校验工具
 ├── INSTALL_GUIDE.md           # 快速图文安装指南
 ├── LICENSE                    # MIT 开源许可证
-└── README.md                  # 中英文双语使用与技术说明文档
+└── README.md                  # 中英文双语使用与多浏览器兼容性说明文档
 ```
 
 ---
