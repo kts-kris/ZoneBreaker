@@ -284,6 +284,15 @@ input:checked + .slider:before {
   border-radius: 4px;
 }
 
+.vectors-subtitle {
+  font-size: 10px;
+  color: #8b949e;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed #21262d;
+}
+
 .vector-list {
   list-style: none;
   display: flex;

@@ -67,6 +67,7 @@ const PRODUCTION_FILES = [
   'popup/popup.html',
   'popup/popup.css',
   'popup/popup.js',
+  'test/detector_test.html',
   'icons/icon16.png',
   'icons/icon48.png',
   'icons/icon128.png',
